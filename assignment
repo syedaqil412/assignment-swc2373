@@ -1,0 +1,377 @@
+style.css:
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+input[type="text"], input[type="submit"] {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* List Styles */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* Navigation Styles */
+a {
+    text-decoration: none;
+    color: #4CAF50;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #45a049;
+}
+
+/* Message or Result Section */
+h2 {
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Container for each section */
+.container {
+    width: 50%;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+/* Button for going back to options */
+.back-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    width: 200px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+}
+
+create_room.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Create a Room</h1>
+        <form method="POST">
+            <label for="room_title">Room Title:</label>
+            <input type="text" id="room_title" name="room_title" required>
+            <input type="submit" value="Create Room">
+        </form>
+        
+        {% if created_room %}
+        <h2>Room Created</h2>
+        <p>Room Title: {{ created_room.title }}</p>
+        {% endif %}
+        
+        <a href="{{ url_for('options') }}" class="back-button">Back to Options</a>
+    </div>
+</body>
+</html>
+
+index.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Webex Access Token</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Your Webex Access Token</h1>
+        <form method="POST">
+            <label for="access_token">Access Token:</label>
+            <input type="text" id="access_token" name="access_token" required>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
+
+options.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webex Tool Options</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Select an Option</h1>
+        <ul>
+            <li><a href="{{ url_for('user_info') }}">Display User Info</a></li>
+            <li><a href="{{ url_for('rooms') }}">Display 5 Rooms</a></li>
+            <li><a href="{{ url_for('create_room_view') }}">Create a Room</a></li>
+            <li><a href="{{ url_for('send_message_view') }}">Send Message to a Room</a></li>
+        </ul>
+    </div>
+</body>
+</html>
+
+rooms.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Rooms</h1>
+        {% if rooms %}
+        <ul>
+            {% for room in rooms %}
+            <li>{{ room.title }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No rooms found.</p>
+        {% endif %}
+        <a href="{{ url_for('options') }}" class="back-button">Back to Options</a>
+    </div>
+</body>
+</html>
+
+send_message.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Send a Message</h1>
+        <form method="POST">
+            <label for="room_id">Room ID:</label>
+            <input type="text" id="room_id" name="room_id" required><br><br>
+            <label for="message_text">Message:</label>
+            <input type="text" id="message_text" name="message_text" required><br><br>
+            <input type="submit" value="Send Message">
+        </form>
+        
+        {% if message_status %}
+        <h2>Message Sent</h2>
+        <p>Message ID: {{ message_status.id }}</p>
+        {% endif %}
+        
+        <a href="{{ url_for('options') }}" class="back-button">Back to Options</a>
+    </div>
+</body>
+</html>
+
+user_info.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>User Information</h1>
+        {% if user_info %}
+        <ul>
+            <li><strong>Name:</strong> {{ user_info.displayName }}</li>
+            <li><strong>Email:</strong> {{ user_info.emails[0] }}</li>
+            <li><strong>Job Title:</strong> {{ user_info.title }}</li>
+            <li><strong>Org ID:</strong> {{ user_info.orgId }}</li>
+        </ul>
+        {% else %}
+        <p>No user info found. Please check your access token.</p>
+        {% endif %}
+        <a href="{{ url_for('options') }}" class="back-button">Back to Options</a>
+    </div>
+</body>
+</html>
+
+app.py:
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+import requests
+
+app = Flask(__name__)
+app.secret_key = 'supersecretkey'  # For session management
+
+# Helper function to fetch user info
+def fetch_user_info(token):
+    url = "https://webexapis.com/v1/people/me"
+    headers = {'Authorization': f'Bearer {token}'}
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json()  # Success
+    else:
+        return None  # Error
+
+# Helper function to fetch rooms
+def fetch_rooms(token):
+    url = "https://webexapis.com/v1/rooms"
+    headers = {'Authorization': f'Bearer {token}'}
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json()["items"][:5]  # Return top 5 rooms
+    else:
+        return None
+
+# Helper function to create a room
+def create_room(token, title):
+    url = "https://webexapis.com/v1/rooms"
+    headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+    data = {"title": title}
+    response = requests.post(url, headers=headers, json=data)
+    
+    if response.status_code == 200:
+        return response.json()  # Room created successfully
+    else:
+        return None  # Error
+
+# Helper function to send message to a room
+def send_message(token, room_id, message):
+    url = "https://webexapis.com/v1/messages"
+    headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+    data = {"roomId": room_id, "text": message}
+    response = requests.post(url, headers=headers, json=data)
+    
+    if response.status_code == 200:
+        return response.json()  # Message sent successfully
+    else:
+        return None  # Error
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        session['access_token'] = request.form.get('access_token')
+        return redirect(url_for('options'))
+
+    return render_template('index.html')
+
+@app.route('/options')
+def options():
+    if 'access_token' not in session:
+        return redirect(url_for('index'))
+    return render_template('options.html')
+
+@app.route('/user_info')
+def user_info():
+    access_token = session.get('access_token')
+    if not access_token:
+        return redirect(url_for('index'))
+
+    user_info = fetch_user_info(access_token)
+    return render_template('user_info.html', user_info=user_info)
+
+@app.route('/rooms')
+def rooms():
+    access_token = session.get('access_token')
+    if not access_token:
+        return redirect(url_for('index'))
+
+    rooms = fetch_rooms(access_token)
+    return render_template('rooms.html', rooms=rooms)
+
+@app.route('/create_room', methods=['GET', 'POST'])
+def create_room_view():
+    access_token = session.get('access_token')
+    if not access_token:
+        return redirect(url_for('index'))
+
+    created_room = None
+    if request.method == 'POST':
+        room_title = request.form.get('room_title')
+        created_room = create_room(access_token, room_title)
+    
+    return render_template('create_room.html', created_room=created_room)
+
+@app.route('/send_message', methods=['GET', 'POST'])
+def send_message_view():
+    access_token = session.get('access_token')
+    if not access_token:
+        return redirect(url_for('index'))
+
+    message_status = None
+    if request.method == 'POST':
+        room_id = request.form.get('room_id')
+        message_text = request.form.get('message_text')
+        message_status = send_message(access_token, room_id, message_text)
+    
+    return render_template('send_message.html', message_status=message_status)
+
+if __name__ == '__main__':
+    app.run(debug=True)
